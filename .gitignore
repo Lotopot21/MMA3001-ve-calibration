@@ -216,3 +216,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+.venv/
+.ruff_cache/
+.ipynb_checkpoints/
+outputs/
+report.html

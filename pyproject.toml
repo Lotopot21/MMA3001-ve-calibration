@@ -1,0 +1,18 @@
+[project]
+name = "vetuner"
+version = "0.1.0"
+description = "Offline VE table calibration from engine sensor logs"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
