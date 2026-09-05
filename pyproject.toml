@@ -16,3 +16,10 @@ select = ["E", "F", "I", "UP", "B", "D"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
