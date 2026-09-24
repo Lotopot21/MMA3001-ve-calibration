@@ -10,9 +10,14 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 100
+exclude = ["notebooks"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "D"]
+ignore = ["B008", "D105", "D107", "D203", "D213"]
+# B008: default arguments here are frozen dataclasses, so the mutable-default
+# hazard the rule targets does not apply. Explicit config defaults keep the
+# generated API documentation readable.
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
@@ -23,3 +28,10 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+exclude = ["notebooks"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D100", "D103"]
+
+
