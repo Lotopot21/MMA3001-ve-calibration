@@ -129,7 +129,7 @@ def test_gating_accepts_a_useful_fraction(log):
 def test_rejection_summary_reports_every_criterion(log):
     summary = gate_samples(log).rejection_summary()
     assert set(summary) == {
-        "implausible_afr", "overrun", "out_of_domain", "transient", "rejected_total"
+        "implausible_afr", "overrun", "out_of_domain", "transient", "rejected_total", "post_overrun"
     }
     assert summary["rejected_total"] > 0
 
@@ -186,3 +186,17 @@ def test_gating_reduces_coverage():
     gated, _ = gated_correction(log, base)
 
     assert (gated.counts > 0).sum() < (naive.counts > 0).sum()
+    
+def test_post_overrun_recovery_is_rejected(log):
+    """Sensor recovery after fuel cut reads lean while every other check passes."""
+    config = GatingConfig()
+    gate = gate_samples(log)
+
+    overrun = overrun_mask(log, config)
+    exits = np.flatnonzero(overrun[:-1] & ~overrun[1:]) + 1
+    assert exits.size > 0
+
+    recovery_samples = int(round(0.3 / (log.time_s[1] - log.time_s[0])))
+    for exit_index in exits:
+        window = slice(exit_index, exit_index + recovery_samples)
+        assert not gate.accepted[window].any()

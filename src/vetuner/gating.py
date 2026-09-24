@@ -52,16 +52,20 @@ class GatingConfig:
     settle_time_s : float
         Period after any transient during which samples remain rejected,
         allowing the sensor reading to catch up.
+    overrun_recovery_s : float
+        Period after fuel cut during which the air-fuel ratio sensor is still decaying from its lean saturation, in seconds. Roughly five sensor time constants.
     """
 
     afr_min: float = 8.0
     afr_max: float = 20.0
     overrun_tps: float = 0.03
     overrun_rpm: float = 1500.0
+    overrun_recovery_s: float = 0.6
     sensor_tau_s: float = 0.12
     max_cell_displacement: float = 0.2
     max_tps_rate: float = 0.5
     settle_time_s: float = 0.2
+    
 
 
 @dataclass(frozen=True)
@@ -87,11 +91,14 @@ class GatingResult:
         the settling period that follows.
     n_total, n_accepted : int
         Sample counts.
+    post_overrun : numpy.ndarray
+        Samples during the sensor's recovery from overrun saturation.
     """
 
     accepted: NDArray[np.bool_]
     implausible_afr: NDArray[np.bool_]
     overrun: NDArray[np.bool_]
+    post_overrun: NDArray[np.bool_]
     out_of_domain: NDArray[np.bool_]
     transient: NDArray[np.bool_]
     n_total: int
@@ -114,6 +121,7 @@ class GatingResult:
         return {
             "implausible_afr": int(self.implausible_afr.sum()),
             "overrun": int(self.overrun.sum()),
+            "post_overrun": int(self.post_overrun.sum()),
             "out_of_domain": int(self.out_of_domain.sum()),
             "transient": int(self.transient.sum()),
             "rejected_total": int(self.n_total - self.n_accepted),
@@ -352,15 +360,17 @@ def gate_samples(
 
     implausible = implausible_afr_mask(log, config)
     overrun = overrun_mask(log, config)
+    post_overrun = post_overrun_mask(log, config)
     out_of_domain = out_of_domain_mask(log, rpm_axis, map_axis)
     transient = transient_mask(log, config, rpm_axis, map_axis)
 
-    accepted = ~(implausible | overrun | out_of_domain | transient)
+    accepted = ~(implausible | overrun | post_overrun | out_of_domain | transient)
 
     return GatingResult(
         accepted=accepted,
         implausible_afr=implausible,
         overrun=overrun,
+        post_overrun=post_overrun,
         out_of_domain=out_of_domain,
         transient=transient,
         n_total=len(log),
@@ -403,3 +413,34 @@ def smoothed_rate(
         vals[-(width // 2) :] = vals[-(width // 2) - 1]
 
     return np.gradient(vals, times)
+
+def post_overrun_mask(
+    log: SensorLog, config: GatingConfig
+) -> NDArray[np.bool_]:
+    """Flag samples immediately following overrun fuel cut.
+
+    During fuel cut the sensor saturates on ambient air at its lean limit.
+    When fuelling resumes the reading decays towards the true mixture over
+    several sensor time constants, so the first samples after overrun report a
+    mixture far leaner than the engine is actually running.
+
+    These samples are hazardous because every other criterion accepts them:
+    the throttle is open, the engine speed is ordinary, the reading lies
+    within the sensor's working range and the operating point is inside the
+    table. Only their history reveals them.
+
+    Parameters
+    ----------
+    log : SensorLog
+        Measured engine data.
+    config : GatingConfig
+        Gating thresholds.
+
+    Returns
+    -------
+    numpy.ndarray
+        Boolean mask, True during the recovery period after fuel cut.
+    """
+    dt = float(log.time_s[1] - log.time_s[0])
+    recovery = int(round(config.overrun_recovery_s / dt))
+    return extend_forward(overrun_mask(log, config), recovery)

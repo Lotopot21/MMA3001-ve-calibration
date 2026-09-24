@@ -9,15 +9,15 @@ This module currently provides per-cell averaging. Further methods are added
 for comparison in later work.
 """
 
-import numpy as np
-from numpy.typing import ArrayLike, NDArray
-
-from vetuner.ve_surface import DEFAULT_MAP_AXIS, DEFAULT_RPM_AXIS
 from dataclasses import dataclass
 
+import numpy as np
+from numpy.typing import ArrayLike, NDArray
 from scipy.interpolate import RBFInterpolator
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import ConstantKernel, Matern, WhiteKernel
+
+from vetuner.ve_surface import DEFAULT_MAP_AXIS, DEFAULT_RPM_AXIS
 
 
 def nearest_cell_indices(
