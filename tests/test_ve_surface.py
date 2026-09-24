@@ -8,8 +8,8 @@ from vetuner.ve_surface import (
     DEFAULT_MAP_AXIS,
     DEFAULT_RPM_AXIS,
     TRUE_SURFACE,
-    volumetric_efficiency,
     ve_table,
+    volumetric_efficiency,
 )
 
 
