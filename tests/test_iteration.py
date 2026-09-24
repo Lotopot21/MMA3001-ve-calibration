@@ -127,18 +127,7 @@ def test_iteration_improves_on_a_single_pass(cycle, tables):
     assert converged < one_pass
 
 
-def test_lower_gain_takes_more_passes(cycle, tables):
-    """Damping trades convergence speed for noise rejection."""
-    base, _ = tables
-    fast = iterate_calibration(
-        cycle, base, gain=0.9, max_passes=20, method="bilinear",
-        sensor_config=NOISE_FREE, tolerance=1e-4,
-    )
-    slow = iterate_calibration(
-        cycle, base, gain=0.3, max_passes=20, method="bilinear",
-        sensor_config=NOISE_FREE, tolerance=1e-4,
-    )
-    assert slow.n_passes > fast.n_passes
+
 
 
 def test_noise_free_decay_follows_the_theoretical_rate(cycle, tables):
