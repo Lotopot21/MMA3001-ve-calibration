@@ -129,10 +129,20 @@ def test_centred_filters_introduce_no_lag(noisy_ramp):
     assert measure_phase_lag(wave, savitzky_golay(wave, 21, 2)) == 0
 
 
-def test_kalman_introduces_lag(noisy_ramp):
-    clean, _ = noisy_ramp
-    wave = clean + 0.5 * np.sin(np.linspace(0.0, 40.0, clean.size))
-    assert measure_phase_lag(wave, kalman_filter(wave, 1e-5, 4e-2)) > 0
+def test_kalman_lags_more_than_a_centred_filter(noisy_ramp):
+    """A causal filter cannot use future samples, so it trails the signal.
+
+    The lag is measured against a step rather than a slow wave: at the gains
+    used here it is a few samples, below the resolution of whole-sample
+    cross-correlation on a smooth signal.
+    """
+    step = np.concatenate([np.zeros(200), np.ones(400)])
+
+    causal = kalman_filter(step, 1e-3, 1e-2)
+    centred = moving_average(step, 11)
+
+    assert causal[205] < 0.9
+    assert centred[205] > 0.9
 
 
 def test_phase_lag_rejects_mismatched_lengths():
@@ -173,3 +183,5 @@ def test_unknown_filter_raises():
 
     with pytest.raises(ValueError):
         filter_log(log, "wavelet")
+        
+

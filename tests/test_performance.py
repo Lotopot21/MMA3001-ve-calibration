@@ -94,10 +94,19 @@ def test_linear_methods_scale_linearly_with_samples():
     assert large / small == pytest.approx(10.0, rel=0.01)
 
 
-def test_gaussian_process_scales_cubically_with_visited_cells():
+def test_gaussian_process_cost_grows_faster_than_linearly_with_visited_cells():
+    """The cubic solve dominates once enough cells are visited.
+
+    The estimate also contains a term linear in sample count, so the ratio
+    falls short of the factor of eight that a purely cubic cost would give at
+    twice the cell count.
+    """
     small = estimate_flops("gaussian_process", 5000, 192, 20)
     large = estimate_flops("gaussian_process", 5000, 192, 40)
-    assert large / small > 6.0
+    assert large / small > 4.0
+
+    bigger = estimate_flops("gaussian_process", 5000, 192, 80)
+    assert bigger / large > large / small
 
 
 def test_gaussian_process_costs_far_more_than_bilinear():
