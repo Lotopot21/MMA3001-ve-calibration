@@ -168,7 +168,7 @@ a damped fixed point scheme; the filters are verified against closed form
 results (a polynomial passes a Savitzky Golay filter unchanged; the Kalman gain
 matches the steady state solution of the Riccati equation).
 
-`[N]` tests run under pytest and in CI on every push.
+342 tests run under pytest and in CI on every push.
 
 ## Results
 
@@ -178,7 +178,8 @@ matches the steady state solution of the Riccati equation).
 | Naive correction, no gating | 10.41 | 3.89% |
 | Gated, per-cell averaging | 6.37 | 3.83% |
 | Gated, Gaussian process | 1.45 | 1.02% |
-| Iterated, gain 0.6 | 5.60 | 0.68% |
+| Iterated bilinear, gain 0.6 | 5.60 | 0.68% |
+| Iterated Gaussian process, gain 0.6 | 1.18 | 0.66% |
 
 | Method | RMSE | Visited | Unvisited | Time |
 |---|---|---|---|---|
@@ -191,7 +192,7 @@ matches the steady state solution of the Riccati equation).
 ## Limitations
 
 - **Coverage is the binding constraint.** The default drive cycle reaches only
-  `[35%]` of table cells. No fitting method can correct a cell the engine never
+  35% of table cells. No fitting method can correct a cell the engine never
   visited; the Gaussian process is used because its variance identifies those
   cells rather than silently extrapolating into them.
 - **The iteration converges to the wrong fixed point.** Because the ECU reads
@@ -200,8 +201,8 @@ matches the steady state solution of the Riccati equation).
   the interpolation error. Accuracy therefore reaches a minimum after a few
   passes and degrades slowly thereafter, so the stopping criterion is based on
   held out error rather than on the size of the table update.
-- **Manifold pressure bias is the dominant error source.** A systematic `[5]`
-  kPa offset costs `[1.15]` percentage points of AFR accuracy, far more than
+- **Manifold pressure bias is the dominant error source.** A systematic 5
+  kPa offset costs 1.15 percentage points of AFR accuracy, far more than
   any random noise, and is absorbed silently into the table.
 - **Filtering was implemented and found unnecessary.** Noise is not a limiting
   factor here, because per cell averaging already reduces it by √n and gating
@@ -221,6 +222,8 @@ src/vetuner/
 ├── drive_cycle.py    Operating point trajectory and throttle model
 ├── engine_model.py   Speed density, ECU fuelling, resulting AFR
 ├── sensors.py        Lag, noise, quantisation
+├── sensor_health.py  Instrument fault screening before calibration
+├── faults.py         Deliberate sensor faults, for testing the screening
 ├── gating.py         Sample acceptance criteria
 ├── surface_fit.py    Six scattered data fitting methods
 ├── correction.py     Correction factors and table update
@@ -234,6 +237,7 @@ src/vetuner/
 
 tests/                pytest suite, one file per module
 notebooks/            One notebook per project phase
+scripts/              Figure generation for the report
 docs/                 Generated API documentation
 ```
 
@@ -250,7 +254,7 @@ Continuous integration runs ruff and pytest on every push.
 ## Documentation
 
 API documentation is generated with pdoc and published at
-[https://https://github.com/Lotopot21/MMA3001-ve-calibration](https://github.com/Lotopot21/MMA3001-ve-calibration)
+[https://github.com/Lotopot21/MMA3001-ve-calibration](https://github.com/Lotopot21/MMA3001-ve-calibration)
 
 To regenerate:
 
