@@ -1,22 +1,3 @@
-# MMA3001-ve-calibration
-MMA3001 project
-
-
-https://github.com/Lotopot21/MMA3001-ve-calibration/
-
-# VE table calibration from engine sensor logs
-
-One-paragraph summary of the engineering problem.
-
-## Installation
-## Usage
-## Inputs and outputs
-## Project structure
-## Validation approach
-## Testing
-## Documentation
-## Licence
-
 # VE table calibration from engine sensor logs
 
 https://github.com/Lotopot21/MMA3001-ve-calibration/
@@ -191,23 +172,21 @@ matches the steady state solution of the Riccati equation).
 
 ## Results
 
-| Stage | Table RMSE (VE pts) | Held out AFR error |
+| Stage | Table RMSE (VE pts) | Held-out AFR error |
 |---|---|---|
-| Starting map | `[7.18]` | `[10.26%]` |
-| Naive correction, no gating | `[14.04]` | `[3.89%]` |
-| Gated, per-cell averaging | `[6.34]` | `[3.63%]` |
-| Gated, Gaussian process | `[1.45]` | `[1.02%]` |
-| Iterated, gain 0.6 | `[5.60]` | `[0.68%]` |
-
-Surface fitting comparison, all on identical gated data:
+| Starting map | 7.18 | 10.26% |
+| Naive correction, no gating | 10.41 | 3.89% |
+| Gated, per-cell averaging | 6.37 | 3.83% |
+| Gated, Gaussian process | 1.45 | 1.02% |
+| Iterated, gain 0.6 | 5.60 | 0.68% |
 
 | Method | RMSE | Visited | Unvisited | Time |
 |---|---|---|---|---|
-| Per-cell averaging | `[6.34]` | `[0.74]` | `[6.98]` | `[4.5 ms]` |
-| Bilinear scatter | `[5.61]` | `[0.57]` | `[6.17]` | `[2.2 ms]` |
-| Global polynomial | `[18.67]` | `[1.78]` | `[20.57]` | `[3.1 ms]` |
-| Thin plate spline | `[2.69]` | `[0.66]` | `[2.95]` | `[4.7 ms]` |
-| Gaussian process | `[1.45]` | `[0.60]` | `[1.57]` | `[103.7 ms]` |
+| Per-cell averaging | 6.37 | 0.70 | 6.99 | 1.5 ms |
+| Bilinear scatter | 5.60 | 0.55 | 6.15 | 1.3 ms |
+| Global polynomial | 18.67 | 1.76 | 20.50 | 40.0 ms |
+| Thin plate spline | 2.64 | 0.62 | 2.89 | 1.9 ms |
+| Gaussian process | 1.50 | 0.56 | 1.63 | 59.0 ms |
 
 ## Limitations
 
@@ -256,7 +235,6 @@ src/vetuner/
 tests/                pytest suite, one file per module
 notebooks/            One notebook per project phase
 docs/                 Generated API documentation
-config/               Engine and sensor parameters
 ```
 
 ## Testing
