@@ -20,7 +20,7 @@ from vetuner.ve_surface import DEFAULT_MAP_AXIS, DEFAULT_RPM_AXIS
 
 @pytest.fixture
 def scattered():
-    """Samples of a known smooth surface over part of the table."""
+    """Sample of a known smooth surface over part of the table."""
     rng = np.random.default_rng(0)
     rpm = rng.uniform(1500.0, 6000.0, 4000)
     map_kpa = rng.uniform(30.0, 95.0, 4000)

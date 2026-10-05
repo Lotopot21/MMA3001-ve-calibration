@@ -52,8 +52,10 @@ class GatingConfig:
     settle_time_s : float
         Period after any transient during which samples remain rejected,
         allowing the sensor reading to catch up.
-    overrun_recovery_s : float
-        Period after fuel cut during which the air-fuel ratio sensor is still decaying from its lean saturation, in seconds. Roughly five sensor time constants.
+        overrun_recovery_s : float
+        Period after fuel cut during which the air-fuel ratio sensor is still
+        decaying from its lean saturation, in seconds. Roughly five sensor
+        time constants.
     """
 
     afr_min: float = 8.0
