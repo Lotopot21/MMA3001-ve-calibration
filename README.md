@@ -179,7 +179,7 @@ matches the steady state solution of the Riccati equation).
 | Gated, per-cell averaging | 6.37 | 3.83% |
 | Gated, Gaussian process | 1.45 | 1.02% |
 | Iterated bilinear, gain 0.6 | 5.60 | 0.68% |
-| Iterated Gaussian process, gain 0.6 | 1.18 | 0.66% |
+| Iterated Gaussian process, gain 0.6 | 1.20 | 0.45% |
 
 | Method | RMSE | Visited | Unvisited | Time |
 |---|---|---|---|---|

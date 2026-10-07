@@ -3,20 +3,13 @@ There are 15 modules within the vetuner with their tests, these were largly draf
 
 ## 2026-09-04 — Project scoping
 
-Used for: pressure-testing my project idea against the brief, and
-identifying a validation strategy.
+Used for: pressure-testing my project idea against the brief, and identifying a validation strategy.
 
-Outcome: I had the pipeline concept (log in, VE table out) but no
-validation plan. Claude proposed the manufactured solution approach —
-known true VE surface, deliberately wrong starting table, noise on the
-simulated measurements only. I adopted this.
+Outcome: I had the pipeline concept (log in, VE table out) but no validation plan. Claude proposed the manufactured solution approach known true VE surface, deliberately wrong starting table, noise on the simulated measurements only. I adopted this.
 
-Verified: checked against the brief, which lists manufactured solutions
-as an accepted validation method. Reasoned through the logic myself to
-confirm the true surface stays hidden from the pipeline.
+Verified: checked against the brief, which lists manufactured solutions as an accepted validation method. Reasoned through the logic myself to confirm the true surface stays hidden from the pipeline.
 
-My decision: scope boundary, deferring exhaust transport delay to a later phase, 
-synthetic data.
+My decision: scope boundary, deferring exhaust transport delay to a later phase,  synthetic data.
 
 ## 2026-09-04 Environment setup
 
@@ -80,145 +73,73 @@ Used for: Suggested the idea of a dampening factor to dampen out noise which was
 
 How this was verified: The dampening ratio was taught in MMA2005, it made compelate sense to use it to dampen the noise form the system, Ai helped me impalent this.
 
-My decision: Use dampening factor
+Limitations: The iteration converges, but not to the true table. Over 12 passes with bilinear fitting, held-out AFR error falls from 10.26% to 0.67% while table RMSE only moves from 7.18 to 5.60 and then sits flat. Because the ECU reads the table by interpolation, the scheme settles on whichever table makes the interpolated value correct, which differs from the truth by the interpolation error. The table error cannot reach zero no matter how many passes are run. The stopping criterion therefore uses held-out error rather than the size of the table update, since the update keeps shrinking after accuracy has stopped improving.
+
+
+My decision: Use a damping factor of 0.6 and stop on held out error.
 
 ## 2026-09-24 Pulse width, performance and transport delay
 
-Used for: Code generation for the injector pulse width output, the
-profiling and FLOP estimates, and the exhaust transport delay model.
-I specified the injector and engine parameters from my own bike.
+Used for: Code generation for the injector pulse width output, the profiling and FLOP estimates, and the exhaust transport delay model. I specified the injector and engine parameters from my own bike.
 
-How this was verified: Pulse widths were checked against hand
-calculations at reference conditions. The timing results were run
-several times to confirm they were stable, and the arithmetic cost
-estimates were compared against the measured times.
+How this was verified: Pulse widths were checked against hand calculations at reference conditions. The timing results were run several times to confirm they were stable, and the arithmetic cost estimates were compared against the measured times.
 
-Limitations: the transport delay rounds to whole samples which is 20 ms at
-50 Hz, that is a failry bad assumptioncompared to the delay at high rpm when the engine is spinning really really fast
+Limitations: the transport delay rounds to whole samples which is 20 ms at 50 Hz, that is a failry bad assumptioncompared to the delay at high rpm when  the engine is spinning really really fast
 
-My decision: For a large majority of the use case, the numbers that the Ai gave are still valid, and when the values are not as valid, the error is likley to not be significant enough to cause massive issues.
+My decision: For a large majority of the use case, the numbers that the  Ai gave are still valid, and when the values are not as valid, the error  is likley to not be significant enough to cause massive issues.
 
 ## 2026-09-25 Sensitivity analysis
 
-Used for: Code to sweep each sensor imperfection in turn and rank the
-effect on accuracy.
+Used for: Code to sweep each sensor imperfection in turn and rank the effect on accuracy.
 
-How this was verified: Ran the sweep myself and read both columns. A
-5 kPa manifold pressure bias costs +1.15 points of AFR accuracy, far
-more than any random noise. Slowing the AFR sensor to 0.50 s does less
-to AFR error (+0.54) but much more to the table (RMSE 4.42 against a
-1.15 baseline).
+How this was verified: Ran the sweep myself and read both columns. A 5 kPa manifold pressure bias costs +1.15 points of AFR accuracy, far more than any random noise. Slowing the AFR sensor to 0.50 s does less to AFR error (+0.54) but much more to the table (RMSE 4.42 against a 1.15 baseline).
 
 ## 2026-09-25 Filtering
 
-Used for: Code for three filters on the AFR channel — moving average,
-Savitzky-Golay and a hand-written Kalman filter — and a phase lag
-measurement to compare them.
+Used for: Code for three filters on the AFR channel — moving average, Savitzky-Golay and a hand-written Kalman filter — and a phase lag measurement to compare them.
 
-How this was verified: Compared all four options on the same gated
-data. Table RMSE was 6.37 for every one of them, and AFR error went
-very slightly worse (3.83% unfiltered against 3.84-3.85% filtered).
-The Kalman filter increased the residual noise rather than reducing it.
+How this was verified: Compared all four options on the same gated data. Table RMSE was 6.37 for every one of them, and AFR error went very slightly worse (3.83% unfiltered against 3.84-3.85% filtered). The Kalman filter increased the residual noise rather than reducing it.
 
-Limitations: Filtering turned out to be unnecessary here. Per-cell
-averaging already reduces noise by root-n and gating removes the
-samples where a noisy reading would be misattributed, so there is
-little left for a filter to do.
+Limitations: Filtering turned out to be unnecessary here. Per-cell averaging already reduces noise by root-n and gating removes the samples where a noisy reading would be misattributed, so there is little left for a filter to do.
 
 My decision: Keep the filter, it added an extra layer of protection to the system, this was a case of the Ai trying to overdo itself
 
 ## 2026-10-03 Robustness and repeatability study
 
-Used for: Code for a study asking how far the pipeline can be trusted
-when its inputs change through repeat runs, different noise seeds, different
-engines, logging rate, table resolution, and logs with poor coverage.
+Used for: Code for a study asking how far the pipeline can be trusted when its inputs change through repeat runs, different noise seeds, different engines, logging rate, table resolution, and logs with poor coverage.
 
-How this was verified: Ran each section myself and read the results
-against what I expected. Repeat runs are bit-for-bit identical. Across
-ten noise seeds the spread is about 8% coefficient of variation, small
-next to the improvement the calibration makes. Twenty randomised
-engines, with new true surfaces and new starting maps each time, all
-twenty improved, worst final AFR error 0.98%. Logging rate is flat from
-10 to 200 Hz. Table resolution has an optimum near 16 x 12, which is why
-the default grid is that size chosen on this evidence rather than by
-convention.
+How this was verified: Ran each section myself and read the results against what I expected. Repeat runs are bit-for-bit identical. Across ten noise seeds the spread is about 8% coefficient of variation, small next to the improvement the calibration makes. Twenty randomised engines, with new true surfaces and new starting maps each time, all twenty improved, worst final AFR error 0.98%. Logging rate is flat from 10 to 200 Hz. Table resolution has an optimum near 16 x 12, which is why the default grid is that size chosen on this evidence rather than by convention.
 
-Unexpected result which Ai helped me find: One case makes the table worse than doing nothing. A cruise only log reaches only 5% of cells and the Gaussian process
-extrapolates across the rest from that one small island. A 34-second log
-covering idle, cruise and a wide-open pull beats 100 seconds of steady
-cruising by a wide margin, so variety in the log matters far more than
-length.
+Unexpected result which Ai helped me find: One case makes the table worse  than doing nothing. A cruise only log reaches only 5% of cells and the Gaussian process extrapolates across the rest from that one small island. A 34-second log covering idle, cruise and a wide-open pull beats 100 seconds of steady cruising by a wide margin, so variety in the log matters far more than length.
 
 My decision: Keep that result, the finding by Ai helped show limitations in my method.
 
 ## 2026-10-03 Sensor health screening
 
-Used for: My idea was a detection algorithm that finds sensor faults in
-the data, fixes the data, then reports what was wrong. Claude argued
-against the fixing part: repairing requires assuming the fault's form
-and leaves no trace in the output, so a table built from repaired data
-looks exactly as trustworthy as one built from good data. The design
-became detect, report and refuse instead. Claude then wrote the module
-and its tests.
+Used for: My idea was a detection algorithm that finds sensor faults in the data, fixes the data, then reports what was wrong. Claude argued against the fixing part: repairing requires assuming the fault's form and leaves no trace in the output, so a table built from repaired data looks exactly as trustworthy as one built from good data. The design became detect, report and refuse instead. Claude then wrote the module and its tests.
 
-How this was verified: Ran the checks against healthy logs across
-several noise seeds and both drive cycles, and against logs with faults
-I injected deliberately. 342 tests pass with full coverage of the new
-code.
+How this was verified: Ran the checks against healthy logs across several noise seeds and both drive cycles, and against logs with faults I injected deliberately. 342 tests pass with full coverage of the new code.
 
-Limitations: The first version of the stuck sensor check flagged the
-throttle and battery voltage channels on a perfectly healthy log,
-because it compared each channel against engine speed. That reference
-was wrong,  engine speed follows the throttle rather than the other way
-round, and battery voltage is held near constant by the alternator.
-Two further rounds of testing were needed before it stopped firing on
-good data. A sluggish AFR sensor still cannot be detected at all: the
-cross-correlation test moved only 0.06 s for a fourfold change in
-sensor time constant, against a baseline of 0.46 s that depends on the
-drive cycle, and an exhaust transport delay shifts it by the same
-amount. That was documented as a limitation rather than shipped as a
-weak detector.
+Limitations: The first version of the stuck sensor check flagged the throttle and battery voltage channels on a perfectly healthy log, because it compared each channel against engine speed. That reference was wrong,  engine speed follows the throttle rather than the other way round, and battery voltage is held near constant by the alternator. Two further rounds of testing were needed before it stopped firing on good data. A sluggish AFR sensor still cannot be detected at all: the cross-correlation test moved only 0.06 s for a fourfold change in sensor time constant, against a baseline of 0.46 s that depends on the drive cycle, and an exhaust transport delay shifts it by the same amount. That was documented as a limitation rather than shipped as a weak detector.
 
-My decision: Even with the issues with the sensors, the results were still valid enough to justify having the sensor health module there. 
+My decision: Even with the issues with the sensors, the results were  still valid enough to justify having the sensor health module there. 
 
 ## 2026-10-03 Sensor fault demonstration
 
-Used for: Code to inject eleven named faults into a log, each paired
-with the verdict the screening should reach, and a notebook comparing a
-healthy and a faulty dataset from the same drive cycle.
+Used for: Code to inject eleven named faults into a log, each paired with the verdict the screening should reach, and a notebook comparing a healthy and a faulty dataset from the same drive cycle.
 
-How this was verified: Ran the full calibration on every faulty log and
-compared what the screening said against what the fault actually cost.
+How this was verified: Ran the full calibration on every faulty log and compared what the screening said against what the fault actually cost.
 
-Limitations: The result contradicted what the section set out to show.
-Severity does not predict damage — only two of the nine detected faults
-harm the table at all. Gating already discards implausible readings, and
-air density cancels in AFR_measured / AFR_target = VE_true / VE_table,
-so a temperature sensor fault cannot reach the VE correction. I checked
-this by confirming the correction factors are identical to the last
-decimal with a dead intake temperature sensor. What the screening adds
-is therefore naming the broken sensor, not protecting the table.
+Limitations: The result contradicted what the section set out to show. Severity does not predict damage — only two of the nine detected faults harm the table at all. Gating already discards implausible readings, and air density cancels in AFR_measured / AFR_target = VE_true / VE_table, so a temperature sensor fault cannot reach the VE correction. I checked this by confirming the correction factors are identical to the last decimal with a dead intake temperature sensor. What the screening adds is therefore naming the broken sensor, not protecting the table.
 
-My decision: It was still useful useful information worth having, however the main part I wanted to have in the table was the naming of the broken sensor so I am still happy with the results
+My decision: It was still useful useful information worth having, however  the main part I wanted to have in the table was the naming of the broken  sensor so I am still happy with the results
 
 ## 2026-09-22 to 10-03 Results table
 
-Used for: Reviewing the README before submission. Claude flagged the
-iterated row of the results table as wrong, saying 5.60 should be 1.18.
-Its reasoning was that 5.60 matched the bilinear figure in the table
-directly below, and that iteration cannot make the result worse than a
-single pass.
+Used for: Reviewing the README before submission. Claude flagged the iterated row of the results table as wrong, saying 5.60 should be 1.18. Its reasoning was that 5.60 matched the bilinear figure in the table directly below, and that iteration cannot make the result worse than a single pass.
 
-How this was verified: I asked where the number had come from rather
-than changing it. Reproducing notebook 05 showed 5.60 is correct — that
-notebook iterates with method="bilinear", not the Gaussian process, and
-gives exactly 5.60 at every gain. Claude had assumed the wrong method
-and was wrong twice before being checked.
+How this was verified: I asked where the number had come from rather than changing it. Reproducing notebook 05 showed 5.60 is correct — that notebook iterates with method="bilinear", not the Gaussian process, and gives exactly 5.60 at every gain. Claude had assumed the wrong method and was wrong twice before being checked.
 
-Limitations: There was a real problem, but not the one flagged. The
-table compares a single-pass Gaussian process result against an iterated
-bilinear result without naming either method, so it reads as though
-iteration made things worse. The project's best result, iterated
-Gaussian process at 1.18, is not in the table at all.
+Limitations: There was a real problem, but not the one flagged. The table compares a single-pass Gaussian process result against an iterated bilinear result without naming either method, so it reads as though iteration made things worse. The project's best result, iterated Gaussian process at 1.18, is not in the table at all.
 
 My decision: The results made sense and the mistake was corrected within the readme 
