@@ -5,7 +5,7 @@ reflects a fuelling error at a known operating point. Several conditions break
 that link:
 
 - overrun fuel cut, where the sensor reads ambient air and no fuelling error
-  exists at all;
+  exists at all, Ie TPS < 0.03 and RPM > 1500, no AFR;
 - transients, where the operating point moves appreciably while the sensor is
   still responding, so the reading belongs to a different table cell;
 - operation outside the table axes, where the ECU clamps its table read and
