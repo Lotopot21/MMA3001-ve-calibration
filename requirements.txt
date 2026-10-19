@@ -64,4 +64,5 @@ tornado==6.5.7
 traitlets==5.16.1
 typing_extensions==4.16.0
 tzdata==2026.3
+-e git+https://github.com/Lotopot21/mma3001-ve-calibration.git@899ba55f21198766e5624ac94c51f9da4aadc4fa#egg=vetuner
 wcwidth==0.8.2
