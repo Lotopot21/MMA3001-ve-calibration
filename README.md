@@ -253,7 +253,7 @@ Continuous integration runs ruff and pytest on every push.
 
 ## Documentation
 
-API documentation is generated with pdoc and published at
+API documentation is generated with pdoc and generated into docs/ at
 [https://github.com/Lotopot21/MMA3001-ve-calibration](https://github.com/Lotopot21/MMA3001-ve-calibration)
 
 To regenerate:
