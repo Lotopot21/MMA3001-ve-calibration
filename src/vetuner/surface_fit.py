@@ -17,10 +17,11 @@ from scipy.interpolate import RBFInterpolator
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import ConstantKernel, Matern, WhiteKernel
 
+from vetuner.performance import nearest_cell_indices_fast
 from vetuner.ve_surface import DEFAULT_MAP_AXIS, DEFAULT_RPM_AXIS
 
 
-def nearest_cell_indices(
+def nearest_cell_indices_broadcast(
     rpm: ArrayLike,
     map_kpa: ArrayLike,
     rpm_axis: ArrayLike = DEFAULT_RPM_AXIS,
@@ -69,6 +70,35 @@ def nearest_cell_indices(
     map_idx = np.abs(map_arr[:, None] - map_ax[None, :]).argmin(axis=1)
     return rpm_idx.astype(np.intp), map_idx.astype(np.intp)
 
+def nearest_cell_indices(
+    rpm: ArrayLike,
+    map_kpa: ArrayLike,
+    rpm_axis: ArrayLike = DEFAULT_RPM_AXIS,
+    map_axis: ArrayLike = DEFAULT_MAP_AXIS,
+) -> tuple[NDArray[np.intp], NDArray[np.intp]]:
+    """Assign each sample to its nearest table node.
+
+    This is the assignment used throughout the fitting path. It delegates to
+    the binary search in `vetuner.performance`, which returns identical
+    indices without forming the sample-by-breakpoint distance matrix.
+    `nearest_cell_indices_broadcast` keeps the original formulation as the
+    reference point for the performance comparison.
+
+    Parameters
+    ----------
+    rpm : array_like
+        Engine speed of each sample, in rpm.
+    map_kpa : array_like
+        Manifold pressure of each sample, in kPa.
+    rpm_axis, map_axis : array_like, optional
+        Table breakpoints.
+
+    Returns
+    -------
+    tuple of numpy.ndarray
+        Speed and load indices, one pair per sample.
+    """
+    return nearest_cell_indices_fast(rpm, map_kpa, rpm_axis, map_axis)
 
 def cell_sample_counts(
     rpm: ArrayLike,
