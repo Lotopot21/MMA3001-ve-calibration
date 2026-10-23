@@ -289,7 +289,7 @@ def main() -> None:
         ax.tick_params(labelsize=8)
     axes[-1].set_xlabel("time (s)", fontsize=9)
     fig.suptitle(
-        f"Input log",
+        "Input log",
         fontsize=11,
         y=0.98,
     )
@@ -357,7 +357,7 @@ def main() -> None:
     )
     fig.colorbar(img, ax=axes[1], label="duty (%)", fraction=0.04, pad=0.02)
     fig.suptitle(
-        f"Injector output",
+        "Injector output",
         fontsize=11,
         y=0.97,
     )
