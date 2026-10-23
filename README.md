@@ -35,7 +35,7 @@ means nothing, and covers only part of the table.
 Requires Python 3.12 or newer.
 
 ```
-git clone https://github.com/YOURNAME/mma3001-ve-calibration.git
+git clone https://github.com/Lotopot21/MMA3001-ve-calibration.git
 cd mma3001-ve-calibration
 python -m venv .venv
 .venv\Scripts\activate        # Windows; use source .venv/bin/activate elsewhere
@@ -96,11 +96,11 @@ The pipeline consumes a time series of measured channels, sampled uniformly.
 | Channel | Units | Domain | Meaning |
 |---|---|---|---|
 | `time_s` | s | increasing | Sample time |
-| `rpm` | rpm | 0–7000 | Engine speed |
-| `map_kpa` | kPa absolute | 8–101 | Manifold pressure |
-| `iat_c` | °C | −40 to 120 | Intake air temperature |
+| `rpm` | rpm | 800–7000 | Engine speed |
+| `map_kpa` | kPa absolute | 20-100 | Manifold pressure |
+| `iat_c` | °C | −40 to 150 | Intake air temperature |
 | `tps` | fraction | 0–1 | Throttle position |
-| `afr` | mass ratio | 8–22 | Measured air-fuel ratio |
+| `afr` | mass ratio | 8–20 | Measured air-fuel ratio |
 | `batt_v` | V | 10–15 | Supply voltage |
 
 All quantities are SI internally; conversion happens only at the boundary.
@@ -179,7 +179,7 @@ matches the steady state solution of the Riccati equation).
 | Gated, per-cell averaging | 6.37 | 3.83% |
 | Gated, Gaussian process | 1.45 | 1.02% |
 | Iterated bilinear, gain 0.6 | 5.60 | 0.68% |
-| Iterated Gaussian process, gain 0.6 | 1.20 | 0.45% |
+| Iterated Gaussian process, gain 0.6 | 1.18 | 0.47% |
 
 | Method | RMSE | Visited | Unvisited | Time |
 |---|---|---|---|---|
@@ -187,12 +187,12 @@ matches the steady state solution of the Riccati equation).
 | Bilinear scatter | 5.60 | 0.55 | 6.15 | 1.3 ms |
 | Global polynomial | 18.67 | 1.76 | 20.50 | 40.0 ms |
 | Thin plate spline | 2.64 | 0.62 | 2.89 | 1.9 ms |
-| Gaussian process | 1.50 | 0.56 | 1.63 | 59.0 ms |
+| Gaussian process | 1.50 | 0.56 | 1.63 | 135.8 ms |
 
 ## Limitations
 
 - **Coverage is the binding constraint.** The default drive cycle reaches only
-  35% of table cells. No fitting method can correct a cell the engine never
+  17.2% of table cells. No fitting method can correct a cell the engine never
   visited; the Gaussian process is used because its variance identifies those
   cells rather than silently extrapolating into them.
 - **The iteration converges to the wrong fixed point.** Because the ECU reads
