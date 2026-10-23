@@ -177,7 +177,7 @@ matches the steady state solution of the Riccati equation).
 | Starting map | 7.18 | 10.26% |
 | Naive correction, no gating | 10.41 | 3.89% |
 | Gated, per-cell averaging | 6.37 | 3.83% |
-| Gated, Gaussian process | 1.50 | 1.02% |
+| Gated, Gaussian process | 1.50 | 1.05% |
 | Iterated bilinear, gain 0.6 | 5.60 | 0.68% |
 | Iterated Gaussian process, gain 0.6 | 1.18 | 0.47% |
 
@@ -186,8 +186,9 @@ matches the steady state solution of the Riccati equation).
 | Per-cell averaging | 6.37 | 0.70 | 6.99 | 4.7 ms |
 | Bilinear scatter | 5.60 | 0.55 | 6.15 | 3.1 ms |
 | Global polynomial | 18.67 | 1.76 | 20.50 | 3.7 ms |
-| Thin plate spline | 2.64 | 0.62 | 2.89 | 1.9 ms |
+| Thin plate spline | 2.64 | 0.62 | 2.89 | 4.4 ms |
 | Gaussian process | 1.50 | 0.56 | 1.63 | 135.8 ms |
+| Confidence-blended GP | 1.67 | 1.43 | 1.71 | 137.3 ms |
 
 ## Limitations
 
