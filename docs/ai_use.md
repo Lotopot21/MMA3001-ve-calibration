@@ -3,13 +3,13 @@ There are 15 modules within the vetuner with their tests, these were largly draf
 
 ## 2026-09-04 — Project scoping
 
-Used for: pressure-testing my project idea against the brief, and identifying a validation strategy.
+Used for: pressure-testing my project idea against the brief, and helped break down and plan a validation strategy.
 
-Outcome: I had the pipeline concept (log in, VE table out) but no validation plan. Claude proposed the manufactured solution approach known true VE surface, deliberately wrong starting table, noise on the simulated measurements only. I adopted this.
+Outcome: I had the pipeline concept (log in, VE table out) but some issues with the validation plan on whether to use a real engines solution or make one myself and risk it not being as valid. Claude helped me break down the options and how each would have is positives and potential drawbacks, I ultimatly chose the manufactured solution approach known true VE surface, deliberately wrong starting table, noise on the simulated measurements only.
 
-Verified: checked against the brief, which lists manufactured solutions as an accepted validation method. Reasoned through the logic myself to confirm the true surface stays hidden from the pipeline.
+Verified: Checked against the brief, which lists manufactured solutions as an accepted validation method. Reasoned through the logic myself to confirm the true surface stays hidden from the pipeline.
 
-My decision: scope boundary, deferring exhaust transport delay to a later phase,  synthetic data.
+My decision: scope boundary, deferring exhaust transport delay to a later phase and using synthetic data.
 
 ## 2026-09-04 Environment setup
 
