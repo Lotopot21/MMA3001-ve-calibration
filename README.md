@@ -183,9 +183,9 @@ matches the steady state solution of the Riccati equation).
 
 | Method | RMSE | Visited | Unvisited | Time |
 |---|---|---|---|---|
-| Per-cell averaging | 6.37 | 0.70 | 6.99 | 1.5 ms |
-| Bilinear scatter | 5.60 | 0.55 | 6.15 | 1.3 ms |
-| Global polynomial | 18.67 | 1.76 | 20.50 | 40.0 ms |
+| Per-cell averaging | 6.37 | 0.70 | 6.99 | 4.7 ms |
+| Bilinear scatter | 5.60 | 0.55 | 6.15 | 3.1 ms |
+| Global polynomial | 18.67 | 1.76 | 20.50 | 3.7 ms |
 | Thin plate spline | 2.64 | 0.62 | 2.89 | 1.9 ms |
 | Gaussian process | 1.50 | 0.56 | 1.63 | 135.8 ms |
 
