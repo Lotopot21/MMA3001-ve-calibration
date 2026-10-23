@@ -132,6 +132,27 @@ part-throttle pull, so that a table fitted on one cycle is scored on
 conditions it was not tuned against.
 """
 
+FINAL_TEST_CYCLE: tuple[Segment, ...] = (
+    Segment(12.0, 900.0, 900.0, 0.00, 0.00, "idle"),
+    Segment(9.0, 900.0, 1800.0, 0.00, 0.12, "gentle pull away"),
+    Segment(26.0, 1800.0, 1850.0, 0.12, 0.13, "low cruise"),
+    Segment(7.0, 1850.0, 3300.0, 0.13, 0.24, "accelerate"),
+    Segment(24.0, 3300.0, 3350.0, 0.24, 0.24, "mid cruise"),
+    Segment(14.0, 2400.0, 5600.0, 0.60, 0.60, "half throttle pull"),
+    Segment(7.0, 5600.0, 2600.0, 0.00, 0.00, "overrun"),
+    Segment(20.0, 2600.0, 2650.0, 0.17, 0.17, "cruise"),
+    Segment(11.0, 3400.0, 6900.0, 1.00, 1.00, "full pull"),
+    Segment(14.0, 1400.0, 900.0, 0.00, 0.00, "return to idle"),
+)
+"""A third cycle, scored once after every method and setting was fixed.
+
+Neither fitted against nor used to select a method, gain or stopping point, so
+a result measured on it carries none of the optimism that follows from scoring
+on the same data used to make those choices. Its operating points differ from
+both other cycles, notably a sustained half-throttle pull and lower cruise
+speeds.
+"""
+
 def first_order_lag(signal: ArrayLike, dt: float, tau_s: float) -> NDArray[np.float64]:
     """Apply a discrete first-order lag to a signal.
 
