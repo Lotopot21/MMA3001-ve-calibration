@@ -177,7 +177,7 @@ matches the steady state solution of the Riccati equation).
 | Starting map | 7.18 | 10.26% |
 | Naive correction, no gating | 10.41 | 3.89% |
 | Gated, per-cell averaging | 6.37 | 3.83% |
-| Gated, Gaussian process | 1.45 | 1.02% |
+| Gated, Gaussian process | 1.50 | 1.02% |
 | Iterated bilinear, gain 0.6 | 5.60 | 0.68% |
 | Iterated Gaussian process, gain 0.6 | 1.18 | 0.47% |
 
